@@ -1,7 +1,8 @@
-const { json } = require('./_http');
-const { listPaidGiftIds } = require('./_db');
+const { toVercel } = require('../lib/vercel');
+const { json } = require('../lib/http');
+const { listPaidGiftIds } = require('../lib/db');
 
-exports.handler = async (event) => {
+async function handler(event) {
   if (event.httpMethod !== 'GET') return json(405, { error: 'Method not allowed' });
 
   try {
@@ -9,4 +10,6 @@ exports.handler = async (event) => {
   } catch (error) {
     return json(500, { error: error.message || 'Failed to load paid gifts' });
   }
-};
+}
+
+module.exports = toVercel(handler);

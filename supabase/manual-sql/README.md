@@ -14,6 +14,6 @@ Ordem recomendada:
 
 `all.sql` contém os scripts de schema (001, 002, 003, 005 e 006) em ordem, sem o seed.
 
-`004_seed_gifts.sql` é gerado a partir de `netlify/functions/_gift-catalog.js`
+`004_seed_gifts.sql` é gerado a partir de `lib/gift-catalog.js`
 com `npm run seed:gifts:sql`. Também dá para cadastrar pelo painel /admin
 (botão "Importar catálogo do site") ou com `npm run seed:gifts`.

@@ -1,13 +1,14 @@
 // Pix direto na chave dos noivos (fora da Asaas).
 // Registra o pedido como `pix_pending`; o admin confirma com "Marcar pago" em /admin.
+const { toVercel } = require('../lib/vercel');
 const crypto = require('node:crypto');
-const { json } = require('./_http');
-const { getCatalogGiftsById, saveOrder } = require('./_db');
+const { json } = require('../lib/http');
+const { getCatalogGiftsById, saveOrder } = require('../lib/db');
 
 const DEFAULT_PIX_KEY = '11953396177';
 const DEFAULT_PIX_QR = '/assets/pix-qr-code.png';
 
-exports.handler = async (event) => {
+async function handler(event) {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
 
   try {
@@ -50,4 +51,6 @@ exports.handler = async (event) => {
   } catch (error) {
     return json(500, { error: error.message || 'Não foi possível registrar o Pix.' });
   }
-};
+}
+
+module.exports = toVercel(handler);

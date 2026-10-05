@@ -1,4 +1,4 @@
-// Cadastra no banco os presentes do catálogo padrão (netlify/functions/_gift-catalog.js).
+// Cadastra no banco os presentes do catálogo padrão (lib/gift-catalog.js).
 //
 //   npm run seed:gifts                 insere os que faltam (Supabase se configurado)
 //   npm run seed:gifts -- --overwrite  também atualiza nome/preço/imagem dos existentes
@@ -15,13 +15,13 @@ function sqlLiteral(value) {
 }
 
 function seedSql() {
-  const { toGiftRecords } = require('../netlify/functions/_gift-catalog');
+  const { toGiftRecords } = require('../lib/gift-catalog');
   const columns = ['id', 'name', 'price', 'image', 'store', 'special', 'active', 'purchased'];
   const values = toGiftRecords()
     .map((gift) => `  (${columns.map((column) => sqlLiteral(gift[column])).join(', ')})`)
     .join(',\n');
   return [
-    '-- Seed gerado a partir de netlify/functions/_gift-catalog.js.',
+    '-- Seed gerado a partir de lib/gift-catalog.js.',
     '-- Regenerar com: npm run seed:gifts:sql > supabase/manual-sql/004_seed_gifts.sql',
     '-- Rodar depois de 001..003. Ids existentes são atualizados (nome, preço, imagem, loja).',
     '',
@@ -44,13 +44,10 @@ async function main() {
     return;
   }
 
-  const { seedGifts, storageBackend } = require('../netlify/functions/_db');
+  const { seedGifts, storageBackend } = require('../lib/db');
   const backend = storageBackend();
-  if (backend === 'netlify-blobs') {
-    throw new Error(
-      'Sem Supabase configurado. Defina SUPABASE_URL e SUPABASE_SECRET_KEY no .env, ' +
-      'ou rode com NETLIFY_DEV=true para gravar em .netlify/local-db.'
-    );
+  if (backend === 'unavailable') {
+    throw new Error('Sem Supabase configurado. Defina SUPABASE_URL e SUPABASE_SECRET_KEY no .env (ou .env.local).');
   }
 
   const result = await seedGifts({ overwrite: args.has('--overwrite') });

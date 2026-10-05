@@ -1,8 +1,9 @@
 // POST /api/installment-options { items: [{id}] }
 // Devolve, para 1x..10x, o total com a taxa da Asaas repassada e o valor da parcela.
-const { json } = require('./_http');
-const { getCatalogGiftsById } = require('./_db');
-const { MAX_INSTALLMENTS, quoteInstallments } = require('./_asaas');
+const { toVercel } = require('../lib/vercel');
+const { json } = require('../lib/http');
+const { getCatalogGiftsById } = require('../lib/db');
+const { MAX_INSTALLMENTS, quoteInstallments } = require('../lib/asaas');
 
 function itemsFromPayload(payload, giftsById) {
   return (Array.isArray(payload.items) ? payload.items : [])
@@ -13,7 +14,7 @@ function itemsFromPayload(payload, giftsById) {
     .filter((amount) => amount > 0);
 }
 
-exports.handler = async (event) => {
+async function handler(event) {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
 
   try {
@@ -36,4 +37,6 @@ exports.handler = async (event) => {
   } catch (error) {
     return json(500, { error: error.message || 'Não foi possível calcular as parcelas.' });
   }
-};
+}
+
+module.exports = toVercel(handler);

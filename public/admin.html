@@ -40,7 +40,7 @@
       <div class="login-row">
         <div>
           <label for="token">Admin token</label>
-          <input id="token" type="password" autocomplete="current-password" placeholder="Cole o ADMIN_TOKEN do Netlify">
+          <input id="token" type="password" autocomplete="current-password" placeholder="Cole o ADMIN_TOKEN configurado na Vercel">
         </div>
         <button id="saveTokenBtn">Entrar</button>
       </div>
@@ -128,7 +128,7 @@
     function authHeaders(extra){
       return { Authorization: `Bearer ${tokenInput.value.trim()}`, ...(extra || {}) };
     }
-    const storageLabels = { supabase: 'Banco: Supabase', 'netlify-blobs': 'Banco: Netlify Blobs', 'local-files': 'Banco: arquivos locais (dev)' };
+    const storageLabels = { supabase: 'Banco: Supabase', unavailable: 'Banco: NÃO configurado (defina SUPABASE_URL/SUPABASE_SECRET_KEY)', 'local-files': 'Banco: arquivos locais (dev)' };
     function itemText(items){ return (items || []).map((item) => item.name).join(', '); }
     function setAuthenticated(){
       loginScreen.hidden = true;

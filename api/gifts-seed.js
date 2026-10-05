@@ -2,10 +2,11 @@
 // POST /api/gifts-seed  { "overwrite": false }
 //   overwrite=false (padrão): só insere os que ainda não existem.
 //   overwrite=true: também atualiza nome, preço e imagem dos existentes.
-const { json, requireAdmin } = require('./_http');
-const { seedGifts } = require('./_db');
+const { toVercel } = require('../lib/vercel');
+const { json, requireAdmin } = require('../lib/http');
+const { seedGifts } = require('../lib/db');
 
-exports.handler = async (event) => {
+async function handler(event) {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
   if (!requireAdmin(event)) return json(401, { error: 'Unauthorized' });
 
@@ -16,4 +17,6 @@ exports.handler = async (event) => {
   } catch (error) {
     return json(500, { error: error.message || 'Não foi possível importar o catálogo' });
   }
-};
+}
+
+module.exports = toVercel(handler);

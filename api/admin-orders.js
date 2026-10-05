@@ -1,7 +1,8 @@
-const { json, requireAdmin } = require('./_http');
-const { listOrders, updateOrder } = require('./_db');
+const { toVercel } = require('../lib/vercel');
+const { json, requireAdmin } = require('../lib/http');
+const { listOrders, updateOrder } = require('../lib/db');
 
-exports.handler = async (event) => {
+async function handler(event) {
   if (!requireAdmin(event)) return json(401, { error: 'Unauthorized' });
 
   try {
@@ -22,4 +23,6 @@ exports.handler = async (event) => {
   } catch (error) {
     return json(500, { error: error.message || 'Failed to load orders' });
   }
-};
+}
+
+module.exports = toVercel(handler);

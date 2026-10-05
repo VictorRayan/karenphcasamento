@@ -1,6 +1,7 @@
+const { toVercel } = require('../lib/vercel');
 const crypto = require('node:crypto');
-const { json } = require('./_http');
-const { getOrder, listOrders, updateOrder } = require('./_db');
+const { json } = require('../lib/http');
+const { getOrder, listOrders, updateOrder } = require('../lib/db');
 
 function secureEquals(received, expected) {
   if (!received || !expected) return false;
@@ -9,7 +10,7 @@ function secureEquals(received, expected) {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
-exports.handler = async (event) => {
+async function handler(event) {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
 
   const receivedToken = event.headers['asaas-access-token'] || event.headers['Asaas-Access-Token'];
@@ -48,4 +49,6 @@ exports.handler = async (event) => {
   } catch (error) {
     return json(500, { error: error.message || 'Webhook processing failed' });
   }
-};
+}
+
+module.exports = toVercel(handler);

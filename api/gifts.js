@@ -1,9 +1,10 @@
+const { toVercel } = require('../lib/vercel');
 const crypto = require('node:crypto');
-const { json, requireAdmin } = require('./_http');
-const { listCatalogGifts, listGifts, saveGifts } = require('./_db');
-const { DEFAULT_STORE } = require('./_gift-catalog');
+const { json, requireAdmin } = require('../lib/http');
+const { listCatalogGifts, listGifts, saveGifts } = require('../lib/db');
+const { DEFAULT_STORE } = require('../lib/gift-catalog');
 
-exports.handler = async (event) => {
+async function handler(event) {
   try {
     // Público: catálogo exibido no site (banco, ou padrão se o banco estiver vazio).
     if (event.httpMethod === 'GET') {
@@ -41,4 +42,6 @@ exports.handler = async (event) => {
   } catch (error) {
     return json(500, { error: error.message || 'Gift API failed' });
   }
-};
+}
+
+module.exports = toVercel(handler);

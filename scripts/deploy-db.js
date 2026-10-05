@@ -1,4 +1,4 @@
-// Passo de banco executado no build da Netlify (ver "build" em package.json):
+// Passo de banco executado no build da Vercel (ver "build" em package.json):
 //   1. aplica supabase/migrations/*.sql (idempotentes);
 //   2. cadastra no banco os presentes do catálogo padrão que ainda não existem.
 //
@@ -20,7 +20,7 @@ function fail(step, error) {
 }
 
 async function main() {
-  const { hasSupabase, describeSupabaseConfig } = require('../netlify/functions/_supabase');
+  const { hasSupabase, describeSupabaseConfig } = require('../lib/supabase');
   const { applyMigrations, migrationMethod } = require('./migrate-supabase');
 
   console.log('[deploy-db] Supabase:', JSON.stringify(describeSupabaseConfig()), '| migrations via:', migrationMethod() || 'nenhum');
@@ -49,7 +49,7 @@ async function main() {
   }
 
   try {
-    const { seedGifts } = require('../netlify/functions/_db');
+    const { seedGifts } = require('../lib/db');
     const result = await seedGifts({ overwrite });
     console.log(`[deploy-db] Seed de presentes: ${result.inserted} novos, ${result.updated} atualizados, ${result.skipped} mantidos, ${result.gifts.length} ativos.`);
   } catch (error) {

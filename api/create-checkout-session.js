@@ -1,11 +1,13 @@
 // Cria o pedido e o Checkout hospedado da Asaas (só cartão de crédito).
 // O número de parcelas é escolhido no site; a taxa da Asaas para essa opção é
-// repassada ao presenteador (ver _asaas.js) e o checkout sai com o total bruto
+// repassada ao presenteador (ver lib/asaas.js) e o checkout sai com o total bruto
 // e o parcelamento travado no número escolhido.
+const { toVercel } = require('../lib/vercel');
 const crypto = require('node:crypto');
-const { json } = require('./_http');
-const { getCatalogGiftsById, saveOrder } = require('./_db');
-const { MAX_INSTALLMENTS, asaasPost, checkoutBase, quoteInstallment } = require('./_asaas');
+const { json } = require('../lib/http');
+const { getCatalogGiftsById, saveOrder } = require('../lib/db');
+const { MAX_INSTALLMENTS, asaasPost, checkoutBase, quoteInstallment } = require('../lib/asaas');
+const { siteUrl } = require('../lib/site');
 
 // Itens vêm do cliente só com o id; nome e valor saem do catálogo (banco ou padrão),
 // nunca do payload.
@@ -24,7 +26,7 @@ function normalizeItems(items, giftsById) {
     .filter((gift) => gift.amount > 0);
 }
 
-exports.handler = async (event) => {
+async function handler(event) {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
   if (!process.env.ASAAS_API_KEY) return json(500, { error: 'Missing ASAAS_API_KEY' });
 
@@ -40,7 +42,7 @@ exports.handler = async (event) => {
     const orderId = crypto.randomUUID();
     const customerName = String(payload.name || '').trim().slice(0, 120);
     const giftMessage = String(payload.message || '').slice(0, 1000);
-    const origin = process.env.URL || event.headers.origin || 'http://localhost:8888';
+    const origin = siteUrl(event);
     const minutesToExpire = Math.min(1440, Math.max(10, Number(process.env.ASAAS_CHECKOUT_EXPIRATION_MINUTES || 30)));
 
     const baseOrder = {
@@ -103,4 +105,6 @@ exports.handler = async (event) => {
   } catch (error) {
     return json(500, { error: error.message || 'Não foi possível iniciar o checkout.' });
   }
-};
+}
+
+module.exports = toVercel(handler);

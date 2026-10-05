@@ -1,4 +1,4 @@
--- Seed gerado a partir de netlify/functions/_gift-catalog.js.
+-- Seed gerado a partir de lib/gift-catalog.js.
 -- Regenerar com: npm run seed:gifts:sql > supabase/manual-sql/004_seed_gifts.sql
 -- Rodar depois de 001..003. Ids existentes são atualizados (nome, preço, imagem, loja).
 

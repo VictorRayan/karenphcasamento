@@ -1,7 +1,8 @@
-const { json, requireAdmin } = require('./_http');
-const { listRsvps } = require('./_db');
+const { toVercel } = require('../lib/vercel');
+const { json, requireAdmin } = require('../lib/http');
+const { listRsvps } = require('../lib/db');
 
-exports.handler = async (event) => {
+async function handler(event) {
   if (!requireAdmin(event)) return json(401, { error: 'Unauthorized' });
   if (event.httpMethod !== 'GET') return json(405, { error: 'Method not allowed' });
 
@@ -10,4 +11,6 @@ exports.handler = async (event) => {
   } catch (error) {
     return json(500, { error: error.message || 'Failed to load RSVPs' });
   }
-};
+}
+
+module.exports = toVercel(handler);
