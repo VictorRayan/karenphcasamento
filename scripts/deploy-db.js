@@ -20,6 +20,12 @@ function fail(step, error) {
 }
 
 async function main() {
+  // Em deployments de Preview da Vercel não mexemos no banco (é o mesmo da produção).
+  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production') {
+    console.log(`[deploy-db] VERCEL_ENV=${process.env.VERCEL_ENV}: migrations e seed só rodam em production. Nada a fazer.`);
+    return;
+  }
+
   const { hasSupabase, describeSupabaseConfig } = require('../lib/supabase');
   const { applyMigrations, migrationMethod } = require('./migrate-supabase');
 

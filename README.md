@@ -42,10 +42,10 @@ Cadastre em Project > Settings > Environment Variables (Production e, se quiser 
 - `ASAAS_WEBHOOK_TOKEN`
 - `ASAAS_CHECKOUT_EXPIRATION_MINUTES=30`
 - `ADMIN_TOKEN`
-- `SITE_URL` (opcional; URL pública sem barra final, para os callbacks do checkout quando houver domínio próprio)
+- `SITE_URL` (recomendada; URL pública sem barra final, usada nos callbacks do checkout)
 - `SUPABASE_URL`
 - `SUPABASE_SECRET_KEY` (ou `SUPABASE_SERVICE_ROLE_KEY`)
-- `SUPABASE_DB_URL` (para as migrations no deploy)
+- `SUPABASE_DB_URL` (para as migrations no deploy; cadastre só em Production — o build pula migrations/seed em Preview)
 - `ASAAS_MAX_INSTALLMENTS`, `PIX_KEY`, `PIX_QR_CODE_IMAGE_URL`, `DB_DEPLOY_STRICT`, `DB_DEPLOY_SEED_OVERWRITE` (opcionais)
 
 Veja `.env.example` para o modelo completo.
@@ -92,7 +92,7 @@ Coloque a faixa em `assets/musica.mp3` ou `assets/musica.m4a` (compra da iTunes 
 
 ## Deploy na Vercel
 
-`vercel.json` define build (`npm run build`), pasta estática (`public/`), região `gru1`, `maxDuration` de 30 s nas functions e os rewrites de `/admin` e da SPA. Importe o repositório com o preset **Other** e Root Directory `./`; não é preciso alterar Build/Output no painel.
+`vercel.json` define build (`npm run build`), pasta estática (`public/`), região `gru1`, `maxDuration` de 30 s nas functions e os rewrites de `/admin` e da SPA. Importe o repositório com o preset **Other** e Root Directory `./`; não é preciso alterar Build/Output no painel. Deixe ligado **Settings > Environment Variables > Automatically expose System Environment Variables** (o site usa `VERCEL_ENV` e `VERCEL_PROJECT_PRODUCTION_URL`). Deployments de Preview têm Vercel Authentication por padrão, o que bloqueia webhook e callbacks da Asaas; para testar sandbox em preview, desligue a proteção para Preview.
 
 ## Desenvolvimento
 
